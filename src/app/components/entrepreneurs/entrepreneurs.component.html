@@ -1,0 +1,146 @@
+<div class="container-fluid">
+  <div class="box">
+    <div class="box-header">
+      <div class="box-header-grid">
+        <div class="box-header-title">Entrepreneurs</div>
+        <div class="box-header-button">
+          <div class="btn-group btn-group-sm">
+            <div class="btn btn-sm btn-primary-gradient" (click)="getModal(content)">new entrepreneur</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="box-content">
+      <ng-container *ngIf="pageEntrepreneurs | async as listEntrepreneurs; else failureOrLoading">
+        <div *ngIf="searchFormGroup" class="mb-2">
+          <form [formGroup]="searchFormGroup" (ngSubmit)="handleSearchEntrepreneur()">
+            <div class="input-group w-25">
+              <input type="search" formControlName="keyword" class="form-control rounded mx-2" placeholder="Search"
+                     aria-label="Search">
+              <button type="submit" class="btn btn-outline-primary">search</button>
+            </div>
+          </form>
+        </div>
+        <table class="table table-striped table-hover" id="example" style="width:100%">
+          <thead>
+          <tr>
+            <th>Entrepreneur Id</th>
+            <th>Entrepreneur First Name</th>
+            <th>Entrepreneur Last Name</th>
+            <th>Company Name</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let i of listEntrepreneurs.content">
+            <td>{{i.entrepreneurId}}</td>
+            <td>{{i.firstName}}</td>
+            <td>{{i.lastName}}</td>
+            <td>{{i.companyName}}</td>
+            <td>
+              <button (click)="handleDeleteEntrepreneur(i)" class="btn btn-danger">
+                <i class="bi bi-trash"></i>
+              </button>
+            </td>
+          </tr>
+          </tbody>
+          <tfoot>
+          <tr>
+            <th>Entrepreneur Id</th>
+            <th>Entrepreneur First Name</th>
+            <th>Entrepreneur Last Name</th>
+            <th>Company Name</th>
+          </tr>
+          </tfoot>
+        </table>
+        <ul class="nav nav-pills">
+          <li *ngFor="let item of [].constructor(listEntrepreneurs.totalPages); let page=index">
+            <a [ngClass]="page==currentPage?'btn-info':'btn-outline-info'" (click)="gotoPage(page)"
+               class="btn mb-1 ms-1 mt-1">{{page}}</a>
+          </li>
+        </ul>
+      </ng-container>
+      <ng-template #failureOrLoading>
+        <ng-container *ngIf="errorMessage;else loading">
+          <div class="test-danger">
+            {{errorMessage}}
+          </div>
+        </ng-container>
+        <ng-template #loading>
+          <div class="loader shadow-sm text-muted">
+            <span><i class="fa-solid fa-rotate fa-spin"></i></span> <span>Processing...</span>
+          </div>
+        </ng-template>
+      </ng-template>
+    </div>
+  </div>
+</div>
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <div class="modal-title text-muted"><i class="fa-regular fa-circle-dot"></i>&nbsp; Entrepreneur Form</div>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <form [formGroup]="entrepreneurFormGroup" method="post">
+
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="text-muted">First Name</label>
+            <input type="text" class="form-control form-font rounded-0 mt-1 mb-3"
+                   [ngClass]="{'is-invalid': submitted && entrepreneurFormGroup.controls['firstName'].errors}"
+                   formControlName="firstName">
+            <div *ngIf="submitted && entrepreneurFormGroup.controls['firstName'].errors" class="invalid-feedback">
+              <div *ngIf="entrepreneurFormGroup.controls['firstName'].errors?.['required']">First Name is Required</div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="text-muted">Last Name</label>
+            <input type="text" class="form-control form-font rounded-0 mt-1 mb-3"
+                   [ngClass]="{'is-invalid': submitted && entrepreneurFormGroup.controls['lastName'].errors}"
+                   formControlName="lastName">
+            <div *ngIf="submitted && entrepreneurFormGroup.controls['lastName'].errors" class="invalid-feedback">
+              <div *ngIf="entrepreneurFormGroup.controls['lastName'].errors?.['required']">Last Name is Required</div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="text-muted">Company Name</label>
+            <input type="text" class="form-control form-font rounded-0 mt-1 mb-3"
+                   [ngClass]="{'is-invalid': submitted && entrepreneurFormGroup.controls['companyName'].errors}"
+                   formControlName="companyName">
+            <div *ngIf="submitted && entrepreneurFormGroup.controls['companyName'].errors" class="invalid-feedback">
+              <div *ngIf="entrepreneurFormGroup.controls['companyName'].errors?.['required']">Company Name is Required</div>
+            </div>
+          </div>
+        </div>
+        <div formGroupName="user">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="text-muted">Email</label>
+              <input type="email" class="form-control form-font rounded-0 mt-1 mb-3" formControlName="email">
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="text-muted">Password</label>
+              <input type="password" class="form-control form-font rounded-0 mt-1 mb-3" formControlName="password">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-sm btn-secondary" (click)="onCloseModal(modal)">Close</button>
+      <button type="button" class="btn btn-sm btn-primary" (click)="onSaveEntrepreneur(modal)">Save changes</button>
+    </div>
+  </form>
+</ng-template>
